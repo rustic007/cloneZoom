@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
 const startServer = async() => {
     try {
         await connectDb()
-        if (ENV.NODE_ENV !== "production") {
+        if (ENV.NODE_ENV === "development") {
             app.listen(ENV.PORT, () => {
                 console.log(`The server started on port ${ENV.PORT}`)
             });
