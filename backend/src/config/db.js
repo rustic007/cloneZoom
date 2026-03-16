@@ -1,13 +1,25 @@
 import mongoose from "mongoose";
 import { ENV } from "./env.js";
 
-export const connectDb = async () => {
-    try {
-        const conn = await mongoose.connect(ENV.MONGO_URI);
-        console.log(`MongoDB connected successfully: ${conn.connection.host}`)
+let isConnected = false;
 
-    }catch(error) {
-        console.log("Error connecting to MongoDb: ", error);
-        process.exit(1);
+export const connectDb = async () => {
+    if (isConnected) {
+        console.log("Using existing database connection");
+        return;
     }
-}
+
+    try {
+        await mongoose.connect(ENV.MONGO_URI, {
+            maxPoolSize: 10,
+            serverSelectionTimeoutMS: 5000,
+        });
+        isConnected = true;
+        console.log("✅ Connected to MongoDB");
+    } catch (error) {
+        console.error("❌ MongoDB connection error:", error.message);
+        throw error;
+    }
+};
+
+export default mongoose;
