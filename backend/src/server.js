@@ -12,26 +12,23 @@ app.use(clerkMiddleware()); // req.auth will be available in the request object
 
 app.use("/api/inngest", serve({ client: inngest, functions}))
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     res.send("Hello World")
 })
 
-
-const startServer = async() => {
-    try {
-        await connectDb()
-        if (ENV.NODE_ENV === "development") {
+if (ENV.NODE_ENV === "development") {
+    const startServer = async () => {
+        try {
+            await connectDb();
             app.listen(ENV.PORT, () => {
-                console.log(`The server started on port ${ENV.PORT}`)
+                console.log(`The server started on port ${ENV.PORT}`);
             });
+        } catch (error) {
+            console.error(`Error starting server: ${error}`);
+            process.exit(1);
         }
-    }catch(error)
-    {
-        console.error(`Error starting server: ${error}`)
-        process.exit(1);
-    }
+    };
+    startServer();
 }
-
-startServer();
 
 export default app;
