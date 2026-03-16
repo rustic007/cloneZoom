@@ -8,11 +8,11 @@ import { serve } from "inngest/express"
 const app = express();
 
 app.use(express.json());
+app.use(clerkMiddleware()); // req.auth will be available in the request object
 
 // Inngest route must be before Clerk middleware — Inngest servers need unauthenticated access
 app.use("/api/inngest", serve({ client: inngest, functions}))
 
-app.use(clerkMiddleware()); // req.auth will be available in the request object
 
 app.get("/", async (req, res) => {
     res.send("Hello World")
